@@ -4,7 +4,8 @@
 	  "rootDir": "./src", 
 	  "module": "nodenext",
     	  "target": "esnext",
-    	  "types": [],
+    	  "types": ["node"],
+	  "rewriteRelativeImportExtensions": true,
     	  "sourceMap": true,
     	  "declaration": true,
 	  "declarationMap": true,
@@ -17,6 +18,6 @@
     	  "moduleDetection": "force",
     	  "skipLibCheck": true
   },
-  "inlcude": ["src/**/*"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules"]
 }

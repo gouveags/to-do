@@ -19,8 +19,11 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "test",
     "build": "tsc",
+    "test": "node --test --experimental-strip-types test/**/*.test.ts",
     "start": "tsc && node dist/index.js"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.10"
   }
 }
