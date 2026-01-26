@@ -5,20 +5,40 @@ import { parseKey } from "../../src/input/keys.ts";
 describe("parseKey", () => {
   it("parses regular characters", () => {
     const key = parseKey(Buffer.from("a"));
-    assert.deepStrictEqual(key, { name: "a", ctrl: false, sequence: "a" });
+    assert.deepStrictEqual(key, {
+      name: "a",
+      ctrl: false,
+      shift: false,
+      sequence: "a",
+    });
   });
 
   it("parses number keys", () => {
     const key1 = parseKey(Buffer.from("1"));
-    assert.deepStrictEqual(key1, { name: "1", ctrl: false, sequence: "1" });
+    assert.deepStrictEqual(key1, {
+      name: "1",
+      ctrl: false,
+      shift: false,
+      sequence: "1",
+    });
 
     const key2 = parseKey(Buffer.from("3"));
-    assert.deepStrictEqual(key2, { name: "3", ctrl: false, sequence: "3" });
+    assert.deepStrictEqual(key2, {
+      name: "3",
+      ctrl: false,
+      shift: false,
+      sequence: "3",
+    });
   });
 
   it("parses Enter key", () => {
     const key = parseKey(Buffer.from("\r"));
-    assert.deepStrictEqual(key, { name: "enter", ctrl: false, sequence: "\r" });
+    assert.deepStrictEqual(key, {
+      name: "enter",
+      ctrl: false,
+      shift: false,
+      sequence: "\r",
+    });
   });
 
   it("parses Escape key", () => {
@@ -26,18 +46,29 @@ describe("parseKey", () => {
     assert.deepStrictEqual(key, {
       name: "escape",
       ctrl: false,
+      shift: false,
       sequence: "\x1b",
     });
   });
 
   it("parses Ctrl+C", () => {
     const key = parseKey(Buffer.from("\x03"));
-    assert.deepStrictEqual(key, { name: "c", ctrl: true, sequence: "\x03" });
+    assert.deepStrictEqual(key, {
+      name: "c",
+      ctrl: true,
+      shift: false,
+      sequence: "\x03",
+    });
   });
 
   it("parses Ctrl+D", () => {
     const key = parseKey(Buffer.from("\x04"));
-    assert.deepStrictEqual(key, { name: "d", ctrl: true, sequence: "\x04" });
+    assert.deepStrictEqual(key, {
+      name: "d",
+      ctrl: true,
+      shift: false,
+      sequence: "\x04",
+    });
   });
 
   it("parses up arrow", () => {
@@ -45,6 +76,7 @@ describe("parseKey", () => {
     assert.deepStrictEqual(key, {
       name: "up",
       ctrl: false,
+      shift: false,
       sequence: "\x1b[A",
     });
   });
@@ -54,6 +86,7 @@ describe("parseKey", () => {
     assert.deepStrictEqual(key, {
       name: "down",
       ctrl: false,
+      shift: false,
       sequence: "\x1b[B",
     });
   });
@@ -63,6 +96,7 @@ describe("parseKey", () => {
     assert.deepStrictEqual(key, {
       name: "right",
       ctrl: false,
+      shift: false,
       sequence: "\x1b[C",
     });
   });
@@ -72,6 +106,7 @@ describe("parseKey", () => {
     assert.deepStrictEqual(key, {
       name: "left",
       ctrl: false,
+      shift: false,
       sequence: "\x1b[D",
     });
   });
@@ -81,13 +116,29 @@ describe("parseKey", () => {
     assert.deepStrictEqual(key, {
       name: "backspace",
       ctrl: false,
+      shift: false,
       sequence: "\x7f",
     });
   });
 
   it("parses tab", () => {
     const key = parseKey(Buffer.from("\t"));
-    assert.deepStrictEqual(key, { name: "tab", ctrl: false, sequence: "\t" });
+    assert.deepStrictEqual(key, {
+      name: "tab",
+      ctrl: false,
+      shift: false,
+      sequence: "\t",
+    });
+  });
+
+  it("parses shift+enter", () => {
+    const key = parseKey(Buffer.from("\x1b[13;2u"));
+    assert.deepStrictEqual(key, {
+      name: "shift-enter",
+      ctrl: false,
+      shift: true,
+      sequence: "\x1b[13;2u",
+    });
   });
 
   it("returns unknown for unrecognized sequences", () => {

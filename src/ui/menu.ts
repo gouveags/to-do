@@ -11,7 +11,7 @@ import {
   drawMenuItem,
   drawText,
 } from "./components.ts";
-import { drawInputField } from "./input-field.ts";
+import { drawInputField, getInputFieldHeight } from "./input-field.ts";
 
 const MAIN_MENU_ITEMS = ["Create a new to-do", "Load a to-do", "Quit"];
 
@@ -125,7 +125,8 @@ export const renderMainMenu = (screen: Screen, state: AppState): void => {
 
 export const renderCreateTodo = (screen: Screen, state: AppState): void => {
   const width = state.terminalSize.cols;
-  const inputWidth = Math.min(60, width - PADDING * 2);
+  const inputWidth = width - PADDING;
+  const maxInputLines = 8;
   let currentRow = 1;
 
   currentRow += drawHeader(screen, currentRow, width, "Create");
@@ -139,17 +140,25 @@ export const renderCreateTodo = (screen: Screen, state: AppState): void => {
 
   drawInputField(screen, currentRow, PADDING, state.input, {
     width: inputWidth,
+    maxLines: maxInputLines,
     label: "Name:",
     showCursor: true,
     withBorders: true,
     padding: PADDING,
   });
-  currentRow += 5;
+  currentRow += getInputFieldHeight(
+    state.input,
+    maxInputLines,
+    true,
+    inputWidth - PADDING * 2 - 2,
+    6,
+  );
 
   drawFooter(screen, currentRow, width, [
     "[Enter] Create",
+    "[Shift+Enter] New line",
+    "[↑/↓] Navigate",
     "[ESC] Cancel",
-    "[←/→] Move cursor",
   ]);
 };
 
@@ -268,19 +277,26 @@ export const renderViewTodo = (screen: Screen, state: AppState): void => {
 
   currentRow++;
 
-  const inputWidth = Math.min(60, width - PADDING * 2);
+  const inputWidth = width - PADDING;
   drawInputField(screen, currentRow, PADDING, state.input, {
     width: inputWidth,
+    maxLines: 3,
     label: "Add item:",
     showCursor: true,
     withBorders: true,
     padding: PADDING,
   });
-  currentRow += 5;
+  currentRow += getInputFieldHeight(
+    state.input,
+    3,
+    true,
+    inputWidth - PADDING * 2 - 2,
+    10,
+  );
 
   drawFooter(screen, currentRow, width, [
-    "[↑/↓] Navigate",
-    "[Enter] Toggle/Add",
+    "[Enter] Add",
+    "[↑/↓] Navigate items",
     "[←/→] Move cursor",
     "[ESC] Back",
   ]);

@@ -49,6 +49,10 @@ const keyToAction = (key: KeyEvent, state: AppState): Action | null => {
   }
 
   if (state.view === "create_todo" || state.view === "view_todo") {
+    if (key.name === "shift-enter" || key.name === "ctrl-enter") {
+      return { type: "INSERT_NEWLINE" };
+    }
+
     switch (key.name) {
       case "enter":
         return { type: "SUBMIT" };
@@ -60,6 +64,10 @@ const keyToAction = (key: KeyEvent, state: AppState): Action | null => {
         return { type: "CURSOR_LEFT" };
       case "right":
         return { type: "CURSOR_RIGHT" };
+      case "up":
+        return { type: "CURSOR_UP" };
+      case "down":
+        return { type: "CURSOR_DOWN" };
       case "home":
         return { type: "CURSOR_HOME" };
       case "end":
@@ -68,15 +76,6 @@ const keyToAction = (key: KeyEvent, state: AppState): Action | null => {
 
     if (key.name.length === 1 && !key.ctrl) {
       return { type: "INPUT_CHAR", char: key.name };
-    }
-  }
-
-  if (state.view === "view_todo") {
-    switch (key.name) {
-      case "up":
-        return { type: "NAVIGATE_UP" };
-      case "down":
-        return { type: "NAVIGATE_DOWN" };
     }
   }
 

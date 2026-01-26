@@ -60,18 +60,22 @@ const mainMenuTransition = (state: AppState, action: Action): AppState => {
       };
     case "SELECT": {
       const views = ["create_todo", "load_todo", "quit"] as const;
+      const nextView = views[state.menuIndex] ?? "main_menu";
       return {
         ...state,
-        view: views[state.menuIndex] ?? "main_menu",
+        view: nextView,
         menuIndex: 0,
+        inputMode: nextView === "create_todo" ? "multi" : "single",
       };
     }
     case "QUICK_SELECT": {
       const views = ["create_todo", "load_todo", "quit"] as const;
+      const nextView = views[action.option - 1] ?? "main_menu";
       return {
         ...state,
-        view: views[action.option - 1] ?? "main_menu",
+        view: nextView,
         menuIndex: 0,
+        inputMode: nextView === "create_todo" ? "multi" : "single",
       };
     }
     default:

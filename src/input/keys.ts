@@ -1,6 +1,7 @@
 export type KeyEvent = {
   name: string;
   ctrl: boolean;
+  shift: boolean;
   sequence: string;
 };
 
@@ -18,6 +19,8 @@ const ESCAPE_SEQUENCES: Record<string, string> = {
   "[H": "home",
   "[F": "end",
   "[3~": "delete",
+  "[13;2u": "shift-enter",
+  "[27;2;13~": "shift-enter",
 };
 
 export const parseKey = (buf: Buffer): KeyEvent => {
@@ -25,38 +28,47 @@ export const parseKey = (buf: Buffer): KeyEvent => {
   const code = buf[0];
 
   if (code === undefined) {
-    return { name: "unknown", ctrl: false, sequence: seq };
+    return { name: "unknown", ctrl: false, shift: false, sequence: seq };
   }
 
   if (code === 0x1b) {
     if (buf.length === 1) {
-      return { name: "escape", ctrl: false, sequence: seq };
+      return { name: "escape", ctrl: false, shift: false, sequence: seq };
     }
     const suffix = seq.slice(1);
     const name = ESCAPE_SEQUENCES[suffix];
-    return { name: name ?? "unknown", ctrl: false, sequence: seq };
+    const isShift = name === "shift-enter";
+    return {
+      name: name ?? "unknown",
+      ctrl: false,
+      shift: isShift,
+      sequence: seq,
+    };
   }
 
   if (code === 0x0d) {
-    return { name: "enter", ctrl: false, sequence: seq };
+    return { name: "enter", ctrl: false, shift: false, sequence: seq };
   }
 
   if (code === 0x7f) {
-    return { name: "backspace", ctrl: false, sequence: seq };
+    return { name: "backspace", ctrl: false, shift: false, sequence: seq };
   }
 
   if (code === 0x09) {
-    return { name: "tab", ctrl: false, sequence: seq };
+    return { name: "tab", ctrl: false, shift: false, sequence: seq };
   }
 
   if (code >= 1 && code <= 26) {
     const name = CTRL_KEYS[code] ?? String.fromCharCode(code + 96);
-    return { name, ctrl: true, sequence: seq };
+    if (code === 10) {
+      return { name: "ctrl-enter", ctrl: true, shift: false, sequence: seq };
+    }
+    return { name, ctrl: true, shift: false, sequence: seq };
   }
 
   if (code >= 32 && code < 127) {
-    return { name: seq, ctrl: false, sequence: seq };
+    return { name: seq, ctrl: false, shift: false, sequence: seq };
   }
 
-  return { name: "unknown", ctrl: false, sequence: seq };
+  return { name: "unknown", ctrl: false, shift: false, sequence: seq };
 };
