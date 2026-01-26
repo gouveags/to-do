@@ -156,8 +156,8 @@ export const renderCreateTodo = (screen: Screen, state: AppState): void => {
 
   drawFooter(screen, currentRow, width, [
     "[Enter] Create",
-    "[Shift+Enter] New line",
-    "[↑/↓] Navigate",
+    "[Ctrl+J] New line",
+    "[↑/↓] Navigate lines",
     "[ESC] Cancel",
   ]);
 };

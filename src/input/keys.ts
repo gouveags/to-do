@@ -59,10 +59,10 @@ export const parseKey = (buf: Buffer): KeyEvent => {
   }
 
   if (code >= 1 && code <= 26) {
-    const name = CTRL_KEYS[code] ?? String.fromCharCode(code + 96);
     if (code === 10) {
-      return { name: "ctrl-enter", ctrl: true, shift: false, sequence: seq };
+      return { name: "newline", ctrl: true, shift: false, sequence: seq };
     }
+    const name = CTRL_KEYS[code] ?? String.fromCharCode(code + 96);
     return { name, ctrl: true, shift: false, sequence: seq };
   }
 

@@ -45,5 +45,10 @@ export const screen = {
   mainBuffer: "\x1b[?1049l",
 } as const;
 
+export const keyboard = {
+  enableKittyProtocol: "\x1b[>1u",
+  disableKittyProtocol: "\x1b[<u",
+} as const;
+
 export const fg256 = (code: number) => `\x1b[38;5;${code}m`;
 export const bg256 = (code: number) => `\x1b[48;5;${code}m`;

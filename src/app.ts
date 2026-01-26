@@ -4,7 +4,7 @@ import {
   startKeyListener,
 } from "./input/keyboard.ts";
 import type { KeyEvent } from "./input/keys.ts";
-import { cursor, screen as screenCodes } from "./render/ansi.ts";
+import { cursor, keyboard, screen as screenCodes } from "./render/ansi.ts";
 import { getTerminalSize } from "./render/layout.ts";
 import { createScreen } from "./render/screen.ts";
 import type { Action } from "./state/app.ts";
@@ -49,7 +49,7 @@ const keyToAction = (key: KeyEvent, state: AppState): Action | null => {
   }
 
   if (state.view === "create_todo" || state.view === "view_todo") {
-    if (key.name === "shift-enter" || key.name === "ctrl-enter") {
+    if (key.name === "shift-enter" || key.name === "newline") {
       return { type: "INSERT_NEWLINE" };
     }
 
@@ -97,7 +97,12 @@ export const runApp = (): void => {
   };
 
   const cleanup = () => {
-    process.stdout.write(screenCodes.clear + cursor.home + cursor.show);
+    process.stdout.write(
+      keyboard.disableKittyProtocol +
+        screenCodes.clear +
+        cursor.home +
+        cursor.show,
+    );
     process.removeListener("SIGWINCH", handleResize);
     disableRawMode();
     if (stopListener) stopListener();
@@ -142,6 +147,7 @@ export const runApp = (): void => {
 
   process.on("SIGWINCH", handleResize);
   enableRawMode();
+  process.stdout.write(keyboard.enableKittyProtocol);
   stopListener = startKeyListener(handleKey);
   renderFrame();
 };
