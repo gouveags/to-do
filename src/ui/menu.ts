@@ -319,7 +319,13 @@ export const renderViewTodo = (screen: Screen, state: AppState): void => {
     screen,
     currentRow,
     width,
-    ["[Enter] Add", "[↑/↓] Navigate", "[Ctrl+↑/↓] Reorder", "[ESC] Back"],
+    [
+      "[Enter] Add",
+      "[Tab] Toggle",
+      "[↑/↓] Navigate",
+      "[Ctrl+↑/↓] Reorder",
+      "[ESC] Back",
+    ],
     MIT_TIP,
   );
 };

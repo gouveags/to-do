@@ -96,6 +96,9 @@ const keyToAction = (key: KeyEvent, state: AppState): Action | null => {
     if (state.view === "view_todo") {
       if (key.name === "ctrl-up") return { type: "MOVE_ITEM_UP" };
       if (key.name === "ctrl-down") return { type: "MOVE_ITEM_DOWN" };
+      if (key.name === "tab" && !state.inputBuffer) {
+        return { type: "SELECT" };
+      }
     }
 
     switch (key.name) {
