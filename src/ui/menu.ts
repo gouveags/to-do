@@ -213,7 +213,14 @@ export const renderLoadTodo = (screen: Screen, state: AppState): void => {
       if (todo) {
         const doneCount = todo.items.filter((it) => it.done).length;
         const dateStr = formatDate(todo.createdAt);
-        const label = `${todo.title} (${doneCount}/${todo.items.length}) - ${dateStr}`;
+        const suffix = ` (${doneCount}/${todo.items.length}) - ${dateStr}`;
+        const availableWidth = width - PADDING * 2 - 4;
+        const maxTitleLen = availableWidth - suffix.length;
+        const title =
+          todo.title.length > maxTitleLen
+            ? `${todo.title.slice(0, maxTitleLen - 1)}…`
+            : todo.title;
+        const label = `${title}${suffix}`;
 
         screen.writeAt(currentRow, 1, " ".repeat(width));
         drawMenuItem(
@@ -406,7 +413,14 @@ export const renderSearchTodo = (screen: Screen, state: AppState): void => {
         const todo = state.todos.find((t) => t.id === entry.id);
         const doneCount = todo ? todo.items.filter((it) => it.done).length : 0;
         const itemCount = todo ? todo.items.length : 0;
-        const label = `${entry.title} (${doneCount}/${itemCount})`;
+        const suffix = ` (${doneCount}/${itemCount})`;
+        const availableWidth = width - PADDING * 2 - 4;
+        const maxTitleLen = availableWidth - suffix.length;
+        const title =
+          entry.title.length > maxTitleLen
+            ? `${entry.title.slice(0, maxTitleLen - 1)}…`
+            : entry.title;
+        const label = `${title}${suffix}`;
 
         screen.writeAt(currentRow, 1, " ".repeat(width));
         drawMenuItem(
