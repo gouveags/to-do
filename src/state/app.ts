@@ -50,7 +50,9 @@ export type Action =
   | { type: "REQUEST_DELETE" }
   | { type: "REQUEST_RENAME" }
   | { type: "CONFIRM_MODAL" }
-  | { type: "CANCEL_MODAL" };
+  | { type: "CANCEL_MODAL" }
+  | { type: "START_ADD" }
+  | { type: "CANCEL_ADD" };
 
 const MAIN_MENU_OPTIONS = 3;
 
@@ -227,6 +229,8 @@ const createTodoTransition = (state: AppState, action: Action): AppState => {
         inputBuffer: "",
         input: clearBuffer(),
         menuIndex: 0,
+        inputMode: "single",
+        isAdding: false,
       };
     }
     default:
@@ -277,6 +281,10 @@ const loadTodoTransition = (state: AppState, action: Action): AppState => {
         view: "view_todo",
         selectedTodoId: entry.id,
         menuIndex: 0,
+        inputBuffer: "",
+        input: clearBuffer(),
+        inputMode: "single",
+        isAdding: false,
       };
     }
     case "ENTER_SEARCH":
@@ -431,6 +439,8 @@ const searchTodoTransition = (state: AppState, action: Action): AppState => {
         input: clearBuffer(),
         selectionMode: false,
         selectedTodoIds: [],
+        inputMode: "single",
+        isAdding: false,
       };
     }
     case "TOGGLE_DATE_FILTER":
@@ -491,7 +501,7 @@ const viewTodoTransition = (state: AppState, action: Action): AppState => {
   const todo = state.todos.find((t) => t.id === state.selectedTodoId);
   if (!todo) return { ...state, view: "main_menu", menuIndex: 0 };
 
-  const inputResult = handleInputAction(state, action);
+  const inputResult = state.isAdding ? handleInputAction(state, action) : null;
   if (inputResult) return inputResult;
 
   switch (action.type) {
@@ -503,6 +513,7 @@ const viewTodoTransition = (state: AppState, action: Action): AppState => {
         menuIndex: 0,
         inputBuffer: "",
         input: clearBuffer(),
+        isAdding: false,
       };
     case "NAVIGATE_DOWN":
       return {
@@ -533,6 +544,7 @@ const viewTodoTransition = (state: AppState, action: Action): AppState => {
       };
     }
     case "SUBMIT": {
+      if (!state.isAdding) return state;
       if (!state.inputBuffer.trim()) return state;
       const newItem: TodoItem = { text: state.inputBuffer.trim(), done: false };
       const updatedTodo = {
@@ -548,6 +560,21 @@ const viewTodoTransition = (state: AppState, action: Action): AppState => {
         menuIndex: updatedTodo.items.length - 1,
       };
     }
+    case "START_ADD":
+      return {
+        ...state,
+        isAdding: true,
+        inputBuffer: "",
+        input: clearBuffer(),
+        inputMode: "single",
+      };
+    case "CANCEL_ADD":
+      return {
+        ...state,
+        isAdding: false,
+        inputBuffer: "",
+        input: clearBuffer(),
+      };
     case "MOVE_ITEM_UP": {
       if (state.menuIndex <= 0 || todo.items.length < 2) return state;
       const idx = state.menuIndex;

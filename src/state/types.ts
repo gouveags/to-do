@@ -74,6 +74,7 @@ export type AppState = {
   modal: ModalState | null;
   modalInput: InputBuffer;
   modalInputBuffer: string;
+  isAdding: boolean;
 };
 
 export const createInputBuffer = (text = ""): InputBuffer => ({
@@ -98,4 +99,5 @@ export const createInitialState = (): AppState => ({
   modal: null,
   modalInput: createInputBuffer(),
   modalInputBuffer: "",
+  isAdding: false,
 });
