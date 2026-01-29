@@ -51,7 +51,12 @@ const keyToAction = (key: KeyEvent, state: AppState): Action | null => {
   }
 
   if (key.ctrl && key.name === "c") return { type: "QUIT" };
-  if (key.name === "escape") return { type: "BACK" };
+  if (key.name === "escape") {
+    if (state.view === "view_todo" && state.isAdding) {
+      return { type: "CANCEL_ADD" };
+    }
+    return { type: "BACK" };
+  }
 
   if (state.view === "main_menu") {
     switch (key.name) {
@@ -152,14 +157,18 @@ const keyToAction = (key: KeyEvent, state: AppState): Action | null => {
     if (state.view === "view_todo") {
       if (key.name === "ctrl-up") return { type: "MOVE_ITEM_UP" };
       if (key.name === "ctrl-down") return { type: "MOVE_ITEM_DOWN" };
-      if (key.name === "tab" && !state.inputBuffer) {
+      if (key.name === "up") return { type: "NAVIGATE_UP" };
+      if (key.name === "down") return { type: "NAVIGATE_DOWN" };
+      if (key.name === "tab" && !state.isAdding && !state.inputBuffer) {
         return { type: "SELECT" };
       }
     }
 
     switch (key.name) {
       case "enter":
-        return { type: "SUBMIT" };
+        return state.view === "view_todo" && !state.isAdding
+          ? { type: "SELECT" }
+          : { type: "SUBMIT" };
       case "backspace":
         return { type: "INPUT_BACKSPACE" };
       case "delete":
@@ -178,7 +187,19 @@ const keyToAction = (key: KeyEvent, state: AppState): Action | null => {
         return { type: "CURSOR_END" };
     }
 
+    if (
+      state.view === "view_todo" &&
+      !state.isAdding &&
+      (key.name === "a" ||
+        key.name === "A" ||
+        key.name === "i" ||
+        key.name === "I")
+    ) {
+      return { type: "START_ADD" };
+    }
+
     if (key.name.length === 1 && !key.ctrl) {
+      if (state.view === "view_todo" && !state.isAdding) return null;
       return { type: "INPUT_CHAR", char: key.name };
     }
   }

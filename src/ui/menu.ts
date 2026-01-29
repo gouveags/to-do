@@ -514,8 +514,8 @@ export const renderViewTodo = (screen: Screen, state: AppState): void => {
   drawInputField(screen, currentRow, PADDING, state.input, {
     width: inputWidth,
     maxLines: 3,
-    label: "Add item:",
-    showCursor: true,
+    label: state.isAdding ? "Add item:" : "Add item (press A):",
+    showCursor: state.isAdding,
     withBorders: true,
     padding: PADDING,
   });
@@ -529,19 +529,22 @@ export const renderViewTodo = (screen: Screen, state: AppState): void => {
 
   const MIT_TIP =
     "MIT Tip: Focus on your top 3 tasks — they’re your Most Important Tasks.";
-  drawFooter(
-    screen,
-    currentRow,
-    width,
-    [
-      "[Enter] Add",
-      "[Tab] Toggle",
-      "[↑/↓] Navigate",
-      "[Ctrl+↑/↓] Reorder",
-      "[ESC] Back",
-    ],
-    MIT_TIP,
-  );
+  const footerHints = state.isAdding
+    ? [
+        "[Enter] Add",
+        "[ESC] Cancel",
+        "[Tab] Toggle",
+        "[↑/↓] Navigate",
+        "[Ctrl+↑/↓] Reorder",
+      ]
+    : [
+        "[A] Add item",
+        "[Enter/Tab] Toggle",
+        "[↑/↓] Navigate",
+        "[Ctrl+↑/↓] Reorder",
+        "[ESC] Back",
+      ];
+  drawFooter(screen, currentRow, width, footerHints, MIT_TIP);
 };
 
 export const renderSearchTodo = (screen: Screen, state: AppState): void => {
